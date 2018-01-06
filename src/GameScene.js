@@ -62,7 +62,7 @@ var GameLayer = cc.Layer.extend({
                         null, this.collisionJugadorConPocion.bind(this),null,null);
        this.space.addCollisionHandler(tipoEnemigo,tipoPocion,
                         null, this.collisionEnemigoConPocion.bind(this),null,null);
-       this.space.addCollisionHandler(tipoEnemigo,tipoDisparo,
+       this.space.addCollisionHandler(tipoJefe,tipoDisparo,
                         null, this.collisionEnemigoConDisparoJefe.bind(this),null,null);
        this.space.addCollisionHandler(tipoJugador,tipoDisparo,
                         null, this.collisionJugadorConDisparoJefe.bind(this),null,null);
@@ -70,7 +70,7 @@ var GameLayer = cc.Layer.extend({
                         null, this.collisionDisparoConSuelo.bind(this),null,null);
        this.space.addCollisionHandler(tipoDisparo,tipoDisparo,
                         null, this.collisionDisparoConDisparo.bind(this),null,null);
-       this.space.addCollisionHandler(tipoEnemigo,tipoSuelo,
+       this.space.addCollisionHandler(tipoJefe,tipoSuelo,
                        null, this.collisionEnemigoConSuelo.bind(this),null,null);
        this.space.addCollisionHandler(tipoJugador,tipoJefe,
                               null, this.collisionJugadorConJefe.bind(this),null,null);
@@ -82,7 +82,9 @@ var GameLayer = cc.Layer.extend({
        this.caballero = new Caballero(this.space,
               cc.p(900,300), this);
 
-
+        if(this.jefe == null){
+            this.jefe = new Jefe(this,cc.p(522,2960));
+        }
        var enemigo = new Enemigo(this,cc.p(1200,700));
        this.enemigos.push(enemigo);
        enemigo = new Enemigo(this,cc.p(650,1000));
@@ -130,10 +132,7 @@ var GameLayer = cc.Layer.extend({
         }
         var correcto = false;
         if(this.caballero.body.p.y > 2070){
-            if(this.jefe == null){
-                console.log("lo creo");
-                this.jefe = new Jefe(this,cc.p(522,2960));
-                }
+
             correcto = true;
         }
         if(this.caballero.body.p.y > 2325){

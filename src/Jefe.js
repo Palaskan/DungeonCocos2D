@@ -12,11 +12,14 @@ var Jefe = cc.Class.extend({
     sprite:null,
     shape:null,
     velocidad:0,
+    fase:null,
 ctor:function (gameLayer, posicion) {
     this.gameLayer = gameLayer;
     this.tiempoEntreDisparos = 2;
     this.vidas = 60;
     this.vidasInicial = this.vidas;
+    this.fase=false;
+    this.velocidad = 300;
     // Crear animación
     var framesAnimacion = [];
     for (var i = 1; i <= 6; i++) {
@@ -67,13 +70,12 @@ ctor:function (gameLayer, posicion) {
     // ejecutar la animación
     this.sprite.runAction(this.actionAnimacionBucle);
     this.animacion = this.actionAnimacionBucle;
-    this.body.applyImpulse(cp.v(this.velocidad, 0), cp.v(0, 0));
+    this.body.applyImpulse(cp.v(300, 0), cp.v(0, 0));
     gameLayer.addChild(this.sprite,10);
 }, update:function (dt, jugadorX,jugadorY) {
-      if(this.vidas <= this.vidasInicial /2){
-        this.tiempoEntreDisparos = this.tiempoEntreDisparos * 2;
-      }
       this.body.vy = 0;
+
+
       // aumentar el tiempo que ha pasado desde el ultimo salto
       this.tiempoUtimoDisparo = this.tiempoUtimoDisparo + dt;
       if(this.tiempoUtimoDisparo > this.tiempoEntreDisparos && Math.abs( this.body.p.x - jugadorX ) < 500){
@@ -92,6 +94,11 @@ ctor:function (gameLayer, posicion) {
                 this.animacion=this.actionAnimacionBucle;
                 this.sprite.runAction(this.animacion);
       }
+      if(this.vidas <= this.vidasInicial /2 ){
+              if(!this.fase)
+                  this.tiempoEntreDisparos = this.tiempoEntreDisparos -0.1;
+              this.fase = true;
+            }
 
   },quitarVida:function(){
         this.vidas--;
