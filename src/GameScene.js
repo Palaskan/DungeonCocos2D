@@ -70,7 +70,7 @@ var GameLayer = cc.Layer.extend({
        return true;
 
     },update:function (dt) {
-        console.log(this.caballero.body.p.x + " y:"+this.caballero.body.p.y);
+        //.log(this.caballero.body.p.x + " y:"+this.caballero.body.p.y);
         if(this.enemigos.length ==0){
             this.eliminados = true;
         }
@@ -190,6 +190,13 @@ var GameLayer = cc.Layer.extend({
         }
         this.formasEliminar = [];
 
+        if(!this.eliminados){
+            for(var i=0;i<this.palancas.length;i++){
+                this.palancas[i].accionada = false;
+            }
+            this.acertijo = [];
+            this.accionadas = false;
+         }
 
     }, cargarMapa:function () {
        this.mapa = new cc.TMXTiledMap(res.mazmorra_tmx);
@@ -277,13 +284,13 @@ var GameLayer = cc.Layer.extend({
                         this.inmunidad = 2;
                         var capaControles = this.getParent().getChildByTag(idCapaControles);
                         capaControles.quitarVida(this.vidas);
+                        this.eliminados = false;
+                        this.acertijo = [];
+                        this.acionadas = false;
+                        for(var i=0;i<this.palancas.length;i++){
+                            this.palancas[i].accionada = false;
+                        }
                     }
-                 }
-                 if(!this.eliminados){
-                    for(var i=0;i<this.palancas.length;i++){
-                        this.palancas[i].accionada = false;
-                    }
-                    this.acertijo = [];
                  }
 
     },collisionJugadorConPuertaNormal:function (arbiter, space) {}
