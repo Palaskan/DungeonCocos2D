@@ -25,10 +25,11 @@ var GameLayer = cc.Layer.extend({
     combinacion:false,
     acertijo:[],
     accionadas:false,
+    sol:[],
     ctor:function () {
 
        this._super();
-
+       this.sol = [4,2,3,1];
        cc.spriteFrameCache.addSpriteFrames(res.caballero_plist);
        cc.spriteFrameCache.addSpriteFrames(res.enemigo_plist);
        cc.spriteFrameCache.addSpriteFrames(res.vela_plist);
@@ -86,13 +87,23 @@ var GameLayer = cc.Layer.extend({
             }
         }
         if(!this.combinacion && this.acertijo.length == 4){
-            var enemigo = new Enemigo(this,cc.p(1354,1909));
-            this.enemigos.push(enemigo);
-            enemigo = new Enemigo(this,cc.p(1354,1500));
-            this.enemigos.push(enemigo);
-            enemigo = new Enemigo(this,cc.p(1104,1500));
-            this.enemigos.push(enemigo);
-            this.acertijo = [];
+            var equal = true;
+            for(var i = 0; i < 4; i++){
+                if(this.sol[i] != this.acertijo[i])
+                    equal = false
+            }
+            if(equal){
+                this.combinacion = true;
+            }
+            else{
+                var enemigo = new Enemigo(this,cc.p(1354,1909));
+                this.enemigos.push(enemigo);
+                enemigo = new Enemigo(this,cc.p(1354,1500));
+                this.enemigos.push(enemigo);
+                enemigo = new Enemigo(this,cc.p(1104,1500));
+                this.enemigos.push(enemigo);
+                this.acertijo = [];
+            }
         }
 
         for(var i=0;i<this.palancas.length;i++){
@@ -196,7 +207,7 @@ var GameLayer = cc.Layer.extend({
             }
             this.acertijo = [];
             this.accionadas = false;
-         }
+        }
 
     }, cargarMapa:function () {
        this.mapa = new cc.TMXTiledMap(res.mazmorra_tmx);
@@ -258,7 +269,7 @@ var GameLayer = cc.Layer.extend({
                 var palancasArray = grupoPalancas.getObjects();
                 for (var i = 0; i < palancasArray.length; i++) {
                       var palanca = new Palanca(this,
-                        cc.p(palancasArray[i]["x"],palancasArray[i]["y"]));
+                        cc.p(palancasArray[i]["x"],palancasArray[i]["y"]), i+1);
                       this.palancas.push(palanca);
                 }
     },teclaPulsada: function(keyCode, event){
@@ -303,7 +314,7 @@ var GameLayer = cc.Layer.extend({
                     if(this.palancas[i].body.p.x == cuerpo.p.x && this.palancas[i].body.p.y == cuerpo.p.y
                         && !this.palancas[i].accionada){
                         this.palancas[i].accionar();
-                        this.acertijo.push(cc.p(this.palancas[i].body.p.x , this.palancas[i].body.p.y ));
+                        this.acertijo.push(this.palancas[i].id);
                     }
                 }
                 if(this.acertijo.length ==4){
