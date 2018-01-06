@@ -6,6 +6,7 @@ var tipoPalanca = 5;
 var tipoSuelo = 6;
 var tipoPocion = 7;
 var tipoDisparo = 8;
+var tipoJefe = 9;
 
 var GameLayer = cc.Layer.extend({
     caballero:null,
@@ -71,10 +72,12 @@ var GameLayer = cc.Layer.extend({
                         null, this.collisionDisparoConDisparo.bind(this),null,null);
        this.space.addCollisionHandler(tipoEnemigo,tipoSuelo,
                        null, this.collisionEnemigoConSuelo.bind(this),null,null);
+       this.space.addCollisionHandler(tipoJugador,tipoJefe,
+                              null, this.collisionJugadorConJefe.bind(this),null,null);
        this.cargarMapa();
        this.scheduleUpdate();
 
-       this.jefe = new Jefe(this,cc.p(522,2960));
+
 
        this.caballero = new Caballero(this.space,
               cc.p(900,300), this);
@@ -127,6 +130,10 @@ var GameLayer = cc.Layer.extend({
         }
         var correcto = false;
         if(this.caballero.body.p.y > 2070){
+            if(this.jefe == null){
+                console.log("lo creo");
+                this.jefe = new Jefe(this,cc.p(522,2960));
+                }
             correcto = true;
         }
         if(this.caballero.body.p.y > 2325){
@@ -136,7 +143,7 @@ var GameLayer = cc.Layer.extend({
              }
         }
         for(var i=0;i<this.velas.length;i++){
-            this.velas[i].update(dt,correcto);
+            this.velas[i].update(dt,this.combinacion);
         }
         if(!this.combinacion && this.acertijo.length == 4){
             var equal = true;
@@ -262,9 +269,9 @@ var GameLayer = cc.Layer.extend({
                 this.disparo = null;
             }
             if(this.jefe!= null && this.jefe.shape == shape){
-                this.jefe.quitarVida();
                 if(this.jefe.vidas<=0){
-                     this.jefe = null;
+                    this.jefe.eliminar();
+                    this.jefe = null;
                 }
             }
         }
@@ -397,7 +404,29 @@ var GameLayer = cc.Layer.extend({
                     this.accionadas = true;
                 }
             }
-    }
+    },collisionJugadorConJefe:function (arbiter, space) {
+                 if(this.caballero.atacando){
+
+                    this.jefe.quitarVida();
+                    var shapes = arbiter.getShapes();
+                    if(this.jefe.vidas <= 0)
+                        this.formasEliminar.push(shapes[1]);
+                  }
+                  else{
+                     if(this.inmunidad<=0){
+                         this.vidas--;
+                         this.inmunidad = 2;
+                         var capaControles = this.getParent().getChildByTag(idCapaControles);
+                         capaControles.quitarVida(this.vidas);
+                         this.eliminados = false;
+                         this.acertijo = [];
+                         this.acionadas = false;
+                         for(var i=0;i<this.palancas.length;i++){
+                             this.palancas[i].accionada = false;
+                         }
+                     }
+                  }
+         }
     ,collisionEnemigoConDisparoJefe:function (arbiter,space){}
     ,collisionDisparoConDisparo:function (arbiter,space){}
     ,collisionDisparoConSuelo:function(arbiter, space){}

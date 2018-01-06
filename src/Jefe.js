@@ -6,14 +6,17 @@ var Jefe = cc.Class.extend({
     actionAnimacionBucle:null,
     disparo:null,
     vidas:0,
+    vidasInicial:0,
     animacion:null,
     atacando:false,
     sprite:null,
     shape:null,
+    velocidad:0,
 ctor:function (gameLayer, posicion) {
     this.gameLayer = gameLayer;
     this.tiempoEntreDisparos = 2;
-    this.vidas = 1;
+    this.vidas = 60;
+    this.vidasInicial = this.vidas;
     // Crear animación
     var framesAnimacion = [];
     for (var i = 1; i <= 6; i++) {
@@ -56,7 +59,7 @@ ctor:function (gameLayer, posicion) {
         this.sprite.getContentSize().height - 16);
         this.shape.setFriction(0);
         this.shape.setElasticity(100);
-    this.shape.setCollisionType(tipoEnemigo);
+    this.shape.setCollisionType(tipoJefe);
     // agregar forma dinamica
     gameLayer.space.addShape(this.shape);
     // añadir sprite a la capa
@@ -64,20 +67,15 @@ ctor:function (gameLayer, posicion) {
     // ejecutar la animación
     this.sprite.runAction(this.actionAnimacionBucle);
     this.animacion = this.actionAnimacionBucle;
-    this.body.applyImpulse(cp.v(300, 0), cp.v(0, 0));
+    this.body.applyImpulse(cp.v(this.velocidad, 0), cp.v(0, 0));
     gameLayer.addChild(this.sprite,10);
 }, update:function (dt, jugadorX,jugadorY) {
+      if(this.vidas <= this.vidasInicial /2){
+        this.tiempoEntreDisparos = this.tiempoEntreDisparos * 2;
+      }
       this.body.vy = 0;
       // aumentar el tiempo que ha pasado desde el ultimo salto
       this.tiempoUtimoDisparo = this.tiempoUtimoDisparo + dt;
-      /*if(jugadorX > this.body.p.x){
-            this.body.vx = 0;
-            this.body.applyImpulse(cp.v(270, 0), cp.v(0, 0));
-      }
-      if(jugadorX < this.body.p.x){
-            this.body.vx = 0;
-            this.body.applyImpulse(cp.v(-270,0),cp.v(0,0));
-      }*/
       if(this.tiempoUtimoDisparo > this.tiempoEntreDisparos && Math.abs( this.body.p.x - jugadorX ) < 500){
             if(Math.abs(jugadorX - this.body.p.x) < 200 || Math.abs(jugadorY - this.body.p.y) < 250){
                         if(!this.atacando){
@@ -89,35 +87,15 @@ ctor:function (gameLayer, posicion) {
                   }
             this.tiempoUtimoDisparo = 0;
       }
-      /*
-      if(jugadorY > this.body.p.y){
-            this.body.vy = 0;
-            this.body.applyImpulse(cp.v(0,250),cp.v(0,0));
-      }
-      if(jugadorY < this.body.p.y){
-            this.body.vy = 0;
-            this.body.applyImpulse(cp.v(0,-250),cp.v(0,0));
-      }*/
-
-
       if(Math.abs(jugadorX - this.body.p.x) >= 150 && Math.abs(jugadorY - this.body.p.y) >=150){
                 this.sprite.stopAllActions();
                 this.animacion=this.actionAnimacionBucle;
                 this.sprite.runAction(this.animacion);
       }
 
-
-      /*// Invertir o no sprite en funcion de la velocidad / orientación
-      if(this.body.getVel().x > 0){
-          this.sprite.flippedX = true;
-      } else {
-           this.sprite.flippedX = false;
-      }*/
   },quitarVida:function(){
         this.vidas--;
-        if(this.vidas<=0){
-            this.eliminar();
-        }
+        console.log(this.vidas);
   }, eliminar: function (){
         // quita la forma
         this.gameLayer.space.removeShape(this.shape);
