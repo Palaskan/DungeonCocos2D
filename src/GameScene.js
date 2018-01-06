@@ -4,6 +4,7 @@ var tipoJugador = 3;
 var tipoEnemigo = 4;
 var tipoPalanca = 5;
 var tipoSuelo = 6;
+var tipoPocion = 7;
 
 var GameLayer = cc.Layer.extend({
     caballero:null,
@@ -19,6 +20,7 @@ var GameLayer = cc.Layer.extend({
     puertasN:[],
     puertasJ:[],
     palancas:[],
+    pociones:[],
     segundo:false,
     formasEliminar:[],
     eliminados:false,
@@ -272,6 +274,13 @@ var GameLayer = cc.Layer.extend({
                         cc.p(palancasArray[i]["x"],palancasArray[i]["y"]), i+1);
                       this.palancas.push(palanca);
                 }
+         var grupoPociones = this.mapa.getObjectGroup("PocionNormal");
+                         var pocionesArray = grupoPociones.getObjects();
+                         for (var i = 0; i < pocionesArray.length; i++) {
+                               var pocion = new Pocion(this,
+                                 cc.p(pocionesArray[i]["x"],pocionesArray[i]["y"]), i+1);
+                               this.pociones.push(pocion);
+                         }
     },teclaPulsada: function(keyCode, event){
          var instancia = event.getCurrentTarget();
 
