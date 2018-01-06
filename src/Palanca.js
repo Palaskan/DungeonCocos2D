@@ -8,10 +8,12 @@ var Palanca = cc.Class.extend({
     body:null,
     shape:null,
     accionada:false,
-ctor:function (gameLayer, posicion) {
+    id:null,
+ctor:function (gameLayer, posicion, id) {
     this.gameLayer = gameLayer;
     // Crear animación
     var framesAnimacion = [];
+    this.id = id;
     for (var i = 1; i <= 1; i++) {
         var str = "palanca_izquierda_" + i + ".png";
         var frame = cc.spriteFrameCache.getSpriteFrame(str);
