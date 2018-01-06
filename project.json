@@ -19,6 +19,9 @@
         "src/Puerta.js",
         "src/Palanca.js",
         "src/Vela.js",
-        "src/ControlesLayer.js"
+        "src/ControlesLayer.js",
+        "src/Jefe.js",
+        "src/Pocion.js",
+        "src/DisparoJefe.js"
     ]
 }

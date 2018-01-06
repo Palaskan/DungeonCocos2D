@@ -4,6 +4,8 @@ var tipoJugador = 3;
 var tipoEnemigo = 4;
 var tipoPalanca = 5;
 var tipoSuelo = 6;
+var tipoPocion = 7;
+var tipoDisparo = 8;
 
 var GameLayer = cc.Layer.extend({
     caballero:null,
@@ -25,7 +27,10 @@ var GameLayer = cc.Layer.extend({
     combinacion:false,
     acertijo:[],
     accionadas:false,
+    inicio:true,
     sol:[],
+    jefe:null,
+    pociones:[],
     ctor:function () {
 
        this._super();
@@ -35,6 +40,8 @@ var GameLayer = cc.Layer.extend({
        cc.spriteFrameCache.addSpriteFrames(res.vela_plist);
        cc.spriteFrameCache.addSpriteFrames(res.puerta_plist);
        cc.spriteFrameCache.addSpriteFrames(res.palanca_plist);
+       cc.spriteFrameCache.addSpriteFrames(res.pocion_plist);
+       cc.spriteFrameCache.addSpriteFrames(res.jefe_plist);
 
        // Inicializar Space (sin gravedad)
        this.space = new cp.Space();
@@ -50,8 +57,24 @@ var GameLayer = cc.Layer.extend({
                         null, this.collisionJugadorConPuertaJefe.bind(this),null,null);
        this.space.addCollisionHandler(tipoJugador,tipoPalanca,
                         null, this.collisionJugadorConPalanca.bind(this),null,null);
+       this.space.addCollisionHandler(tipoJugador,tipoPocion,
+                        null, this.collisionJugadorConPocion.bind(this),null,null);
+       this.space.addCollisionHandler(tipoEnemigo,tipoPocion,
+                        null, this.collisionEnemigoConPocion.bind(this),null,null);
+       this.space.addCollisionHandler(tipoEnemigo,tipoDisparo,
+                        null, this.collisionEnemigoConDisparoJefe.bind(this),null,null);
+       this.space.addCollisionHandler(tipoJugador,tipoDisparo,
+                        null, this.collisionJugadorConDisparoJefe.bind(this),null,null);
+       this.space.addCollisionHandler(tipoDisparo,tipoSuelo,
+                        null, this.collisionDisparoConSuelo.bind(this),null,null);
+       this.space.addCollisionHandler(tipoDisparo,tipoDisparo,
+                        null, this.collisionDisparoConDisparo.bind(this),null,null);
+       this.space.addCollisionHandler(tipoEnemigo,tipoSuelo,
+                       null, this.collisionEnemigoConSuelo.bind(this),null,null);
        this.cargarMapa();
        this.scheduleUpdate();
+
+       this.jefe = new Jefe(this,cc.p(522,2960));
 
        this.caballero = new Caballero(this.space,
               cc.p(900,300), this);
@@ -72,6 +95,22 @@ var GameLayer = cc.Layer.extend({
 
     },update:function (dt) {
         //.log(this.caballero.body.p.x + " y:"+this.caballero.body.p.y);
+        if(this.jefe!= null && this.jefe.atacando){
+              var x= 0;
+              var y=0;
+              this.disparo = new DisparoJefe(this,cc.p(this.jefe.body.p.x,this.jefe.body.p.y));
+              this.disparo.body.applyImpulse(cp.v((this.caballero.body.p.x - this.disparo.body.p.x)*5, (this.caballero.body.p.y - this.disparo.body.p.y)*5),cp.v(0,0));
+              this.jefe.atacando = false;
+        }
+        if(this.disparo != null){
+              this.disparo.update(dt);
+        }
+        if(this.jefe!= null && this.caballero.body.p.y > 2324){
+              this.jefe.update(dt,this.caballero.body.p.x,this.caballero.body.p.y);
+        }
+        for(var i=0;i<this.pociones.length;i++){
+              this.pociones[i].update(dt);
+        }
         if(this.enemigos.length ==0){
             this.eliminados = true;
         }
@@ -81,10 +120,23 @@ var GameLayer = cc.Layer.extend({
         for(var i=0;i<this.puertasN.length;i++){
             this.puertasN[i].updateNormal(dt,this.eliminados)
         }
-        if(this.combinacion){
+        if(this.combinacion && this.inicio){
             for(var i=0;i<this.puertasJ.length;i++){
                 this.puertasJ[i].updateJefe(dt,this.combinacion)
             }
+        }
+        var correcto = false;
+        if(this.caballero.body.p.y > 2070){
+            correcto = true;
+        }
+        if(this.caballero.body.p.y > 2325){
+             this.inicio = false;
+             for(var i=0;i<this.puertasJ.length;i++){
+                this.puertasJ[i].updateJefe(dt,this.inicio);
+             }
+        }
+        for(var i=0;i<this.velas.length;i++){
+            this.velas[i].update(dt,correcto);
         }
         if(!this.combinacion && this.acertijo.length == 4){
             var equal = true;
@@ -116,6 +168,7 @@ var GameLayer = cc.Layer.extend({
             this.vidas=3;
             var capaControles = this.getParent().getChildByTag(idCapaControles);
             capaControles.quitarVida(this.vidas);
+            this.inicio = true;
         }
         this.space.step(dt);
 
@@ -198,6 +251,22 @@ var GameLayer = cc.Layer.extend({
                     this.enemigos.splice(i, 1);
                 }
             }
+            for (var i = 0; i < this.pociones.length; i++) {
+                if (this.pociones[i].shape == shape) {
+                    this.pociones[i].eliminar();
+                    this.pociones.splice(i, 1);
+                }
+            }
+            if(this.disparo != null && this.disparo.shape == shape){
+                this.disparo.eliminar();
+                this.disparo = null;
+            }
+            if(this.jefe!= null && this.jefe.shape == shape){
+                this.jefe.quitarVida();
+                if(this.jefe.vidas<=0){
+                     this.jefe = null;
+                }
+            }
         }
         this.formasEliminar = [];
 
@@ -272,6 +341,13 @@ var GameLayer = cc.Layer.extend({
                         cc.p(palancasArray[i]["x"],palancasArray[i]["y"]), i+1);
                       this.palancas.push(palanca);
                 }
+        var grupoPocionesN = this.mapa.getObjectGroup("PocionNormal");
+                var pocionesNArray = grupoPocionesN.getObjects();
+                    for (var i = 0; i < pocionesNArray.length; i++) {
+                        var pocion = new Pocion(this,
+                                cc.p(pocionesNArray[i]["x"],pocionesNArray[i]["y"]));
+                        this.pociones.push(pocion);
+                }
     },teclaPulsada: function(keyCode, event){
          var instancia = event.getCurrentTarget();
 
@@ -322,6 +398,32 @@ var GameLayer = cc.Layer.extend({
                 }
             }
     }
+    ,collisionEnemigoConDisparoJefe:function (arbiter,space){}
+    ,collisionDisparoConDisparo:function (arbiter,space){}
+    ,collisionDisparoConSuelo:function(arbiter, space){}
+    ,collisionEnemigoConSuelo:function (arbiter, space){
+        this.jefe.body.vx = this.jefe.body.vx*-1;
+    }
+    ,collisionJugadorConPocion:function (arbiter, space) {
+            var shapes = arbiter.getShapes();
+            // shapes[0] es el jugador
+            this.formasEliminar.push(shapes[1]);
+            this.vidas++;
+            var capaControles = this.getParent().getChildByTag(idCapaControles);
+            capaControles.quitarVida(this.vidas);
+
+       },collisionEnemigoConPocion:function (arbiter, space) {}
+       ,collisionJugadorConDisparoJefe:function (arbiter,space){
+            if(this.inmunidad<=0){
+                this.vidas--;
+                this.inmunidad = 2;
+                var capaControles = this.getParent().getChildByTag(idCapaControles);
+                capaControles.quitarVida(this.vidas);
+            }
+            var shapes = arbiter.getShapes();
+            // shapes[0] es el jugador
+            this.formasEliminar.push(shapes[1]);
+       }
 });
 
 var idCapaJuego = 1;

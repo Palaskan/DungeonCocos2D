@@ -14,6 +14,10 @@ var res = {
     puerta_plist: "res/puerta.plist",
     palanca_png: "res/palanca.png",
     palanca_plist: "res/palanca.plist",
+    pocion_plist: "res/pocion.plist",
+    pocion_png: "res/pocion.png",
+    jefe_plist: "res/jefe.plist",
+    jefe_png: "res/jefe.png",
 };
 
 var g_resources = [];
