@@ -95,10 +95,12 @@ ctor:function (gameLayer, posicion) {
                 this.sprite.runAction(this.animacion);
       }
       if(this.vidas <= this.vidasInicial /2 ){
-              if(!this.fase)
-                  this.tiempoEntreDisparos = this.tiempoEntreDisparos -0.1;
+              if(!this.fase){
+                  this.tiempoEntreDisparos = this.tiempoEntreDisparos /2;
+                  this.body.vx = this.body.vx * 1.5
+              }
               this.fase = true;
-            }
+      }
 
   },quitarVida:function(){
         this.vidas--;

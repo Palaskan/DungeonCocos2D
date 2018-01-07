@@ -45,12 +45,6 @@ ctor:function (gameLayer, posicion, id) {
     // forma
     this.shape = new cp.BoxShape(body,32,38);
     this.shape.setCollisionType(tipoPalanca);
-    /*if(this.tipo==1){
-        this.shape.setCollisionType(tipoPuertaNormal);
-    }
-    if(this.tipo==2){
-        this.shape.setCollisionType(tipoPuertaJefe);
-    }*/
 
     // agregar forma dinamica
     gameLayer.space.addStaticShape(this.shape);

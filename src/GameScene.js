@@ -7,6 +7,7 @@ var tipoSuelo = 6;
 var tipoPocion = 7;
 var tipoDisparo = 8;
 var tipoJefe = 9;
+var tipoCartel = 10;
 
 var GameLayer = cc.Layer.extend({
     caballero:null,
@@ -32,6 +33,7 @@ var GameLayer = cc.Layer.extend({
     sol:[],
     jefe:null,
     pociones:[],
+    cartel:null,
     ctor:function () {
 
        this._super();
@@ -73,9 +75,13 @@ var GameLayer = cc.Layer.extend({
        this.space.addCollisionHandler(tipoJefe,tipoSuelo,
                        null, this.collisionEnemigoConSuelo.bind(this),null,null);
        this.space.addCollisionHandler(tipoJugador,tipoJefe,
-                              null, this.collisionJugadorConJefe.bind(this),null,null);
-      this.space.addCollisionHandler(tipoDisparo,tipoPocion,
-                                    null, this.collisionDisparoConPocion.bind(this),null,null);
+                        null, this.collisionJugadorConJefe.bind(this),null,null);
+       this.space.addCollisionHandler(tipoDisparo,tipoPocion,
+                        null, this.collisionDisparoConPocion.bind(this),null,null);
+       this.space.addCollisionHandler(tipoJugador,tipoCartel,
+                        null, this.collisionJugadorConCartel.bind(this),null,null);
+       this.space.addCollisionHandler(tipoJefe,tipoPocion,
+                        null, this.collisionJefeConPocion.bind(this),null,null);
        this.cargarMapa();
        this.scheduleUpdate();
 
@@ -238,6 +244,8 @@ var GameLayer = cc.Layer.extend({
             }
        }
        if(this.tecla == 32){
+            var capaControles = this.getParent().getChildByTag(idCapaControles);
+            capaControles.quitarAcertijo();
             this.caballero.atacar();
        }
 
@@ -356,6 +364,14 @@ var GameLayer = cc.Layer.extend({
                                 cc.p(pocionesNArray[i]["x"],pocionesNArray[i]["y"]));
                         this.pociones.push(pocion);
                 }
+
+          var grupoCartel = this.mapa.getObjectGroup("Cartel");
+                         var cartelArray = grupoCartel.getObjects();
+                             for (var i = 0; i < cartelArray.length; i++) {
+                                 var cartel = new Cartel(this,
+                                         cc.p(cartelArray[i]["x"],cartelArray[i]["y"]));
+                                 this.cartel = cartel;
+                         }
     },teclaPulsada: function(keyCode, event){
          var instancia = event.getCurrentTarget();
 
@@ -390,6 +406,7 @@ var GameLayer = cc.Layer.extend({
 
     },collisionJugadorConPuertaNormal:function (arbiter, space) {}
     ,collisionJugadorConPuertaJefe:function (arbiter, space) {}
+    ,collisionJefeConPocion:function (arbiter, space) {}
     ,collisionJugadorConPalanca:function (arbiter, space) {
             if(!this.accionadas && this.eliminados){
                 var palanca = arbiter.getShapes();
@@ -434,6 +451,10 @@ var GameLayer = cc.Layer.extend({
     ,collisionDisparoConSuelo:function(arbiter, space){}
     ,collisionEnemigoConSuelo:function (arbiter, space){
         this.jefe.body.vx = this.jefe.body.vx*-1;
+    }
+    ,collisionJugadorConCartel:function (arbiter, space){
+            var capaControles = this.getParent().getChildByTag(idCapaControles);
+            capaControles.mostrarAcertijo();
     }
     ,collisionJugadorConPocion:function (arbiter, space) {
             var shapes = arbiter.getShapes();
