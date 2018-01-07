@@ -74,6 +74,8 @@ var GameLayer = cc.Layer.extend({
                        null, this.collisionEnemigoConSuelo.bind(this),null,null);
        this.space.addCollisionHandler(tipoJugador,tipoJefe,
                               null, this.collisionJugadorConJefe.bind(this),null,null);
+      this.space.addCollisionHandler(tipoDisparo,tipoPocion,
+                                    null, this.collisionDisparoConPocion.bind(this),null,null);
        this.cargarMapa();
        this.scheduleUpdate();
 
@@ -85,9 +87,9 @@ var GameLayer = cc.Layer.extend({
         if(this.jefe == null){
             this.jefe = new Jefe(this,cc.p(522,2960));
         }
-       var enemigo = new Enemigo(this,cc.p(1200,700));
+       var enemigo = new Enemigo(this,cc.p(1200,700), true);
        this.enemigos.push(enemigo);
-       enemigo = new Enemigo(this,cc.p(650,1000));
+       enemigo = new Enemigo(this,cc.p(650,1000), false);
        this.enemigos.push(enemigo);
 
        cc.eventManager.addListener({
@@ -426,6 +428,7 @@ var GameLayer = cc.Layer.extend({
                      }
                   }
          }
+    ,collisionDisparoConPocion:function (arbiter,space){}
     ,collisionEnemigoConDisparoJefe:function (arbiter,space){}
     ,collisionDisparoConDisparo:function (arbiter,space){}
     ,collisionDisparoConSuelo:function(arbiter, space){}

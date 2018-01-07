@@ -16,7 +16,7 @@ var Jefe = cc.Class.extend({
 ctor:function (gameLayer, posicion) {
     this.gameLayer = gameLayer;
     this.tiempoEntreDisparos = 2;
-    this.vidas = 60;
+    this.vidas = 120;
     this.vidasInicial = this.vidas;
     this.fase=false;
     this.velocidad = 300;
