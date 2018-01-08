@@ -22,6 +22,8 @@
         "src/ControlesLayer.js",
         "src/Jefe.js",
         "src/Pocion.js",
-        "src/DisparoJefe.js"
+        "src/DisparoJefe.js",
+        "src/Cartel.js",
+        "src/Llave.js"
     ]
 }

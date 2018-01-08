@@ -16,7 +16,7 @@ var Jefe = cc.Class.extend({
 ctor:function (gameLayer, posicion) {
     this.gameLayer = gameLayer;
     this.tiempoEntreDisparos = 2;
-    this.vidas = 60;
+    this.vidas = 120;
     this.vidasInicial = this.vidas;
     this.fase=false;
     this.velocidad = 300;
@@ -95,10 +95,12 @@ ctor:function (gameLayer, posicion) {
                 this.sprite.runAction(this.animacion);
       }
       if(this.vidas <= this.vidasInicial /2 ){
-              if(!this.fase)
-                  this.tiempoEntreDisparos = this.tiempoEntreDisparos -0.1;
+              if(!this.fase){
+                  this.tiempoEntreDisparos = this.tiempoEntreDisparos /2;
+                  this.body.vx = this.body.vx * 1.5
+              }
               this.fase = true;
-            }
+      }
 
   },quitarVida:function(){
         this.vidas--;
