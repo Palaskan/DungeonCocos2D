@@ -477,8 +477,10 @@ var GameLayer = cc.Layer.extend({
         this.jefe.body.vx = this.jefe.body.vx*-1;
     }
     ,collisionJugadorConCartel:function (arbiter, space){
-            var capaControles = this.getParent().getChildByTag(idCapaControles);
-            capaControles.mostrarAcertijo();
+            if(this.caballero.atacando){
+                var capaControles = this.getParent().getChildByTag(idCapaControles);
+                capaControles.mostrarAcertijo();
+            }
     }
     ,collisionJugadorConPocion:function (arbiter, space) {
             var shapes = arbiter.getShapes();
