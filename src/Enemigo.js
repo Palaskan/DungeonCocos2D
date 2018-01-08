@@ -5,9 +5,12 @@ var Enemigo = cc.Class.extend({
     animacion:null,
     sprite:null,
     shape:null,
-ctor:function (gameLayer, posicion, drop) {
+    dropKey:null,
+    dropPotion:null,
+ctor:function (gameLayer, posicion, drop, dropKey) {
     this.gameLayer = gameLayer;
     this.dropPotion = drop;
+    this.dropKey = dropKey;
     // Crear animación
     var framesAnimacion = [];
     for (var i = 1; i <= 6; i++) {
@@ -116,6 +119,10 @@ ctor:function (gameLayer, posicion, drop) {
         if(this.dropPotion){
             var pocion = new Pocion(this.gameLayer,cc.p(this.body.p.x,this.body.p.y));
             this.gameLayer.pociones.push(pocion)
+        }
+        if(this.dropKey){
+            var llave = new Llave(this.gameLayer,cc.p(this.body.p.x,this.body.p.y));
+            this.gameLayer.llaves.push(llave)
         }
     }
 

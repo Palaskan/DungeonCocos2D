@@ -93,15 +93,20 @@ ctor:function (gameLayer, posicion,tipo) {
 
 
     gameLayer.addChild(this.sprite,10);
-}, updateNormal:function (dt, correcto) {
+}, updateNormal:function (dt, correcto, llaves, numllaves) {
 
       // aumentar el tiempo que ha pasado desde el ultimo salto
-      if(correcto){
+      if(correcto && llaves == 0 && numllaves == 0){
             if(this.tipo == 1){
                 this.sprite.runAction(this.actionAnimacionNormalAbierta);
                 this.shape.setCollisionType(tipoPuertaNormal);
             }
       }
+      if(correcto && llaves == 0 && numllaves > 0){
+              if(this.tipo == 1){
+                  this.shape.setCollisionType(tipoPuertaNormal);
+              }
+       }
       if(!correcto){
             if(this.tipo == 1){
                 this.sprite.runAction(this.actionAnimacionNormalCerrada);
