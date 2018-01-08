@@ -8,8 +8,7 @@ ctor:function (gameLayer, posicion) {
     // Crear animación
     var framesAnimacion = [];
     for (var i = 1; i <= 1; i++) {
-        var str = "pocion_normal_" + i + ".png";
-        var frame = cc.spriteFrameCache.getSpriteFrame(str);
+        var frame = cc.spriteFrameCache.getSpriteFrame("key.png");
         framesAnimacion.push(frame);
     }
     var animacion = new cc.Animation(framesAnimacion, 0.2);
@@ -18,7 +17,7 @@ ctor:function (gameLayer, posicion) {
 
 
     // Crear Sprite - Cuerpo y forma
-    this.sprite = new cc.PhysicsSprite("#pocion_normal_1.png");
+    this.sprite = new cc.PhysicsSprite("res/key.png");
 
     // Cuerpo estático , no le afectan las fuerzas
     var body = new cp.StaticBody();

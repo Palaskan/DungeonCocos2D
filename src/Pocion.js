@@ -25,7 +25,7 @@ ctor:function (gameLayer, posicion) {
     body.setPos(posicion);
     this.sprite.setBody(body);
     // forma
-    this.shape = new cp.BoxShape(body,31,31);
+    this.shape = new cp.BoxShape(body,25,25);
     this.shape.setCollisionType(tipoPocion);
     // agregar forma dinamica
     gameLayer.space.addShape(this.shape);
@@ -33,8 +33,6 @@ ctor:function (gameLayer, posicion) {
 
     this.sprite.runAction(this.actionAnimacionNormal);
     this.animacion = this.actionAnimacionNormal;
-
-
 
     gameLayer.addChild(this.sprite,10);
 }, update:function (dt) {

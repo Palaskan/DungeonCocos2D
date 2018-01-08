@@ -24,6 +24,7 @@
         "src/Pocion.js",
         "src/DisparoJefe.js",
         "src/Cartel.js",
-        "src/Llave.js"
+        "src/Llave.js",
+        "src/Contenedor.js"
     ]
 }
