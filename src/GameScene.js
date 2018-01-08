@@ -135,10 +135,13 @@ var GameLayer = cc.Layer.extend({
         }
         if(this.enemigos.length ==0){
             this.eliminados = true;
+        }else{
+             this.eliminados = false;
+         }
+        for(var i=0;i<this.contenedores.length;i++){
+          this.contenedores[i].update(dt, this.caballero.atacando);
         }
-        else{
-            this.eliminados = false;
-        }
+
         for(var i=0;i<this.puertasN.length;i++){
             this.puertasN[i].updateNormal(dt,this.eliminados,this.llaves.length ,this.numllaves)
         }

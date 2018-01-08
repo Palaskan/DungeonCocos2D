@@ -18,6 +18,7 @@ var res = {
     pocion_png: "res/pocion.png",
     jefe_plist: "res/jefe.plist",
     jefe_png: "res/jefe.png",
+    llave_png: "res/key.png",
 };
 
 var g_resources = [];

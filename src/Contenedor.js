@@ -13,8 +13,7 @@ ctor:function (gameLayer, posicion, drop) {
         // Crear animación
         var framesAnimacion = [];
         for (var i = 1; i <= 1; i++) {
-            var str = "pocion_normal_" + i + ".png";
-            var frame = cc.spriteFrameCache.getSpriteFrame(str);
+            var frame = cc.spriteFrameCache.getSpriteFrame("res/caja_madera.png");
             framesAnimacion.push(frame);
         }
         var animacion = new cc.Animation(framesAnimacion, 0.2);
@@ -23,7 +22,7 @@ ctor:function (gameLayer, posicion, drop) {
 
 
         // Crear Sprite - Cuerpo y forma
-        this.sprite = new cc.PhysicsSprite("#pocion_normal_1.png");
+        this.sprite = new cc.PhysicsSprite("res/caja_madera.png");
 
         // Cuerpo estático , no le afectan las fuerzas
         var body = new cp.StaticBody();
@@ -31,7 +30,7 @@ ctor:function (gameLayer, posicion, drop) {
         this.body = body;
         this.sprite.setBody(body);
         // forma
-        this.shape = new cp.BoxShape(body,31,31);
+        this.shape = new cp.BoxShape(body,40, 40);
         this.shape.setCollisionType(tipoContenedor);
         // agregar forma dinamica
         gameLayer.space.addShape(this.shape);
@@ -40,8 +39,13 @@ ctor:function (gameLayer, posicion, drop) {
         this.sprite.runAction(this.actionAnimacionNormal);
         this.animacion = this.actionAnimacionNormal;
          gameLayer.addChild(this.sprite,10);
-}, update:function (dt, jugadorX,jugadorY) {
+}, update:function (dt, atacando) {
         this.sprite.runAction(this.actionAnimacionNormal);
+        if(atacando){
+            this.shape.setCollisionType(tipoContenedor)
+        }else{
+            this.shape.setCollisionType(0);
+        }
   }, eliminar: function (){
         // quita la forma
         this.gameLayer.space.removeShape(this.shape);
