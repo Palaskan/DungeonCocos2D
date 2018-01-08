@@ -9,6 +9,7 @@ var tipoDisparo = 8;
 var tipoJefe = 9;
 var tipoCartel = 10;
 var tipoLlave = 11;
+var tipoContenedor = 12;
 
 var GameLayer = cc.Layer.extend({
     caballero:null,
@@ -34,6 +35,7 @@ var GameLayer = cc.Layer.extend({
     sol:[],
     jefe:null,
     pociones:[],
+    contenedores:[],
     llaves:[],
     cartel:null,
     numllaves:0,
@@ -87,6 +89,8 @@ var GameLayer = cc.Layer.extend({
                         null, this.collisionJefeConPocion.bind(this),null,null);
        this.space.addCollisionHandler(tipoJugador,tipoLlave,
                         null, this.collisionJugadorConLlave.bind(this),null,null);
+       this.space.addCollisionHandler(tipoJugador,tipoContenedor,
+                        null, this.collisionJugadorConContenedor.bind(this),null,null);
        this.cargarMapa();
        this.scheduleUpdate();
 
@@ -271,6 +275,12 @@ var GameLayer = cc.Layer.extend({
                     this.enemigos.splice(i, 1);
                 }
             }
+            for (var i = 0; i < this.contenedores.length; i++) {
+                if (this.contenedores[i].shape == shape) {
+                    this.contenedores[i].eliminar();
+                    this.contenedores.splice(i, 1);
+                }
+            }
             for (var i = 0; i < this.pociones.length; i++) {
                 if (this.pociones[i].shape == shape) {
                     this.pociones[i].eliminar();
@@ -283,6 +293,7 @@ var GameLayer = cc.Layer.extend({
                     this.llaves.splice(i, 1);
                 }
             }
+
             if(this.disparo != null && this.disparo.shape == shape){
                 this.disparo.eliminar();
                 this.disparo = null;
@@ -382,6 +393,18 @@ var GameLayer = cc.Layer.extend({
                                          cc.p(cartelArray[i]["x"],cartelArray[i]["y"]));
                                  this.cartel = cartel;
                          }
+          var grupoContenedor = this.mapa.getObjectGroup("Contenedores");
+             var contenedorArray = grupoContenedor.getObjects();
+             var isPotion = false;
+                 for (var i = 0; i < contenedorArray.length; i++) {
+                    if(i%2 == 0)
+                        isPotion = true
+                    else
+                        isPotion = false;
+                     var contenedor = new Contenedor(this,
+                             cc.p(contenedorArray[i]["x"],contenedorArray[i]["y"]), isPotion);
+                     this.contenedores.push(contenedor);
+                 }
     },teclaPulsada: function(keyCode, event){
          var instancia = event.getCurrentTarget();
 
@@ -508,6 +531,12 @@ var GameLayer = cc.Layer.extend({
             this.formasEliminar.push(shapes[1]);
             var capaControles = this.getParent().getChildByTag(idCapaControles);
             capaControles.añadirLlave(this.numllaves);
+       },collisionJugadorConContenedor:function (arbiter,space){
+             if(this.caballero.atacando){
+                var shapes = arbiter.getShapes();
+                // shapes[0] es el jugador
+                this.formasEliminar.push(shapes[1]);
+             }
        }
 });
 
