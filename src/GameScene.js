@@ -39,6 +39,7 @@ var GameLayer = cc.Layer.extend({
     llaves:[],
     cartel:null,
     numllaves:0,
+    colisionado:false,
     ctor:function () {
 
        this._super();
@@ -123,6 +124,9 @@ var GameLayer = cc.Layer.extend({
               this.disparo = new DisparoJefe(this,cc.p(this.jefe.body.p.x,this.jefe.body.p.y));
               this.disparo.body.applyImpulse(cp.v((this.caballero.body.p.x - this.disparo.body.p.x)*5, (this.caballero.body.p.y - this.disparo.body.p.y)*5),cp.v(0,0));
               this.jefe.atacando = false;
+        }
+        if(this.jefe != null && this.jefe.body.p.x > 890 && this.jefe.body.p.x < 905){
+              this.colisionado = false;
         }
         if(this.disparo != null){
               this.disparo.update(dt);
@@ -500,7 +504,10 @@ var GameLayer = cc.Layer.extend({
     ,collisionDisparoConDisparo:function (arbiter,space){}
     ,collisionDisparoConSuelo:function(arbiter, space){}
     ,collisionEnemigoConSuelo:function (arbiter, space){
-        this.jefe.body.vx = this.jefe.body.vx*-1;
+        if(!this.colisionado){
+            this.jefe.body.vx = this.jefe.body.vx*-1;
+            this.colisionado = true;
+        }
     }
     ,collisionJugadorConCartel:function (arbiter, space){
             if(this.caballero.atacando){

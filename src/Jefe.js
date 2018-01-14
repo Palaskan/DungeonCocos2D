@@ -79,7 +79,7 @@ ctor:function (gameLayer, posicion) {
       // aumentar el tiempo que ha pasado desde el ultimo salto
       this.tiempoUtimoDisparo = this.tiempoUtimoDisparo + dt;
       if(this.tiempoUtimoDisparo > this.tiempoEntreDisparos && Math.abs( this.body.p.x - jugadorX ) < 500){
-            if(Math.abs(jugadorX - this.body.p.x) < 200 || Math.abs(jugadorY - this.body.p.y) < 250){
+            if(Math.abs(jugadorX - this.body.p.x) < 150 || Math.abs(jugadorY - this.body.p.y) < 150){
                         if(!this.atacando){
                             this.sprite.stopAllActions();
                             this.animacion=this.actionAnimacionAtaque;
